@@ -1,0 +1,21 @@
+# Adding security headers
+<IfModule mod_headers.c>
+Header add X-Frame-Options "SAMEORIGIN"
+Header add X-Xss-Protection "1; mode=block"
+Header add Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+Header add X-Content-Type-Options "nosniff"
+Header add Referrer-Policy "strict-origin-when-cross-origin"
+Header add Permissions-Policy "accelerometer=(self), camera=(self), geolocation=(self), gyroscope=(self), magnetometer=(self), microphone=(self), payment=(self), usb=(self)"
+Header add X-Permitted-Cross-Domain-Policies "none"
+Header add Expect-CT "max-age=86400, enforce"
+Header add Content-Security-Policy "block-all-mixed-content; frame-ancestors 'self'; form-action 'self'; object-src 'none'; base-uri 'self';"
+</IfModule>
+
+# Redirect to HTTPS if you're coming in on HTTP
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP_HOST} !=localhost
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-ARR-SSL} ^$
+RewriteRule ^/?(.*) https://%{HTTP_HOST}/$1 [R,L]
+</IfModule>
